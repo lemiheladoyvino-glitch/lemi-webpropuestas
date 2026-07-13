@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LEMI — helado y vino</title>
+<meta name="description" content="LEMI. Helado y vino. Barra de barrio: vino natural, vermut, conservas y helado. Talavera." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Shrikhand&family=Abril+Fatface&family=Permanent+Marker&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+<style>
+  :root {
+    --crema: #f1ead9;
+    --crema-2: #e9e0c9;
+    --tinta: #26251f;
+    --verde: #6a7a3f;
+    --verde-osc: #4d5a2c;
+    --naranja: #d96e30;
+    --mostaza: #dfae3c;
+    --azul: #4f7fa8;
+    --rojo: #b8402e;
+    --vino: #5d2a2a;
+    --negro: #1c1b17;
+
+    --slab: "Alfa Slab One", serif;
+    --script: "Shrikhand", serif;
+    --didone: "Abril Fatface", serif;
+    --mano: "Permanent Marker", cursive;
+    --sans: "Archivo", sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--crema);
+    color: var(--tinta);
+    font-family: var(--sans);
+    line-height: 1.5;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection { background: var(--verde); color: var(--crema); }
+
+  /* grano sobre todo, fijo, sin coste de repaint en scroll */
+  .grano {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    pointer-events: none;
+    opacity: 0.5;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ── entradas ── */
+  @media (prefers-reduced-motion: no-preference) {
+    .sube {
+      opacity: 0;
+      transform: translateY(18px) rotate(var(--rot, 0deg));
+      animation: sube 600ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      animation-delay: var(--d, 0ms);
+    }
+    @keyframes sube {
+      to { opacity: 1; transform: translateY(0) rotate(var(--rot, 0deg)); }
+    }
+    .aparece {
+      opacity: 0;
+      transform: translateY(24px) rotate(var(--rot, 0deg));
+      transition: opacity 700ms cubic-bezier(0.16,1,0.3,1), transform 700ms cubic-bezier(0.16,1,0.3,1);
+    }
+    .aparece.visto {
+      opacity: 1;
+      transform: translateY(0) rotate(var(--rot, 0deg));
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .marquesina-track { animation: none !important; }
+    html { scroll-behavior: auto; }
+  }
+
+  /* ── nav ── */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.9rem clamp(1rem, 4vw, 3rem);
+    background: var(--crema);
+    border-bottom: 3px solid var(--tinta);
+  }
+  .nav-logo {
+    font-family: var(--slab);
+    font-size: 1.5rem;
+    color: var(--verde);
+    text-decoration: none;
+    letter-spacing: 0.04em;
+    text-shadow: 2px 2px 0 var(--tinta);
+  }
+  .nav-links { display: flex; gap: 1.6rem; align-items: center; }
+  .nav-links a {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--tinta);
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .nav-links a:hover { color: var(--naranja); }
+  .nav-ig {
+    background: var(--verde);
+    color: var(--crema) !important;
+    padding: 0.45rem 1rem;
+    border: 2px solid var(--tinta);
+    border-radius: 999px;
+    box-shadow: 3px 3px 0 var(--tinta);
+    transition: transform 150ms ease-out, box-shadow 150ms ease-out;
+  }
+  .nav-ig:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--tinta); color: var(--crema); }
+  .nav-ig:active { transform: translate(2px, 2px) scale(0.98); box-shadow: 1px 1px 0 var(--tinta); }
+
+  /* ── hero ── */
+  .hero {
+    position: relative;
+    padding: clamp(2rem, 5vh, 4rem) clamp(1rem, 4vw, 3rem) clamp(3rem, 7vh, 5rem);
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: clamp(1.5rem, 4vw, 3rem);
+    align-items: center;
+    min-height: min(78vh, 700px);
+  }
+  .lemi-mark {
+    font-family: var(--slab);
+    font-size: clamp(4.5rem, 17vw, 13rem);
+    line-height: 0.85;
+    color: var(--verde);
+    letter-spacing: -0.01em;
+    user-select: none;
+  }
+  .lemi-mark span {
+    display: inline-block;
+    text-shadow: 4px 5px 0 var(--tinta);
+  }
+  .lemi-mark span:nth-child(1) { transform: rotate(-4deg); }
+  .lemi-mark span:nth-child(2) { transform: rotate(2.5deg) translateY(-0.06em); }
+  .lemi-mark span:nth-child(3) { transform: rotate(-2deg); }
+  .lemi-mark span:nth-child(4) { transform: rotate(4deg) translateY(0.04em); color: var(--naranja); }
+
+  .hero-sub {
+    margin-top: 1.4rem;
+    font-family: var(--script);
+    font-size: clamp(1.6rem, 4vw, 2.6rem);
+    color: var(--tinta);
+    line-height: 1.28;
+    padding-bottom: 0.25em;
+  }
+  .hero-sub em {
+    font-style: normal;
+    color: var(--rojo);
+  }
+  .hero-cta {
+    display: inline-block;
+    margin-top: 1.8rem;
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 1.05rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-decoration: none;
+    color: var(--crema);
+    background: var(--rojo);
+    padding: 0.9rem 1.8rem;
+    border: 3px solid var(--tinta);
+    border-radius: 999px;
+    box-shadow: 5px 5px 0 var(--tinta);
+    transition: transform 150ms ease-out, box-shadow 150ms ease-out;
+  }
+  .hero-cta:hover { transform: translate(-2px, -2px); box-shadow: 7px 7px 0 var(--tinta); }
+  .hero-cta:active { transform: translate(3px, 3px) scale(0.98); box-shadow: 1px 1px 0 var(--tinta); }
+
+  /* video como foto pegada con cinta */
+  .polaroid {
+    --rot: 3deg;
+    position: relative;
+    background: #fffdf6;
+    padding: 12px 12px 3rem;
+    border: 2px solid var(--tinta);
+    box-shadow: 8px 10px 0 rgba(38, 37, 31, 0.85);
+    transform: rotate(var(--rot));
+    justify-self: end;
+    width: min(100%, 420px);
+  }
+  .polaroid video { width: 100%; display: block; border: 2px solid var(--tinta); }
+  .polaroid figcaption {
+    position: absolute;
+    bottom: 0.7rem;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-family: var(--mano);
+    font-size: 1.15rem;
+    color: var(--tinta);
+  }
+  .cinta {
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    width: 120px;
+    height: 32px;
+    background: rgba(223, 174, 60, 0.75);
+    border-left: 2px dashed rgba(38,37,31,0.25);
+    border-right: 2px dashed rgba(38,37,31,0.25);
+    transform: translateX(-50%) rotate(-4deg);
+  }
+
+  /* sticker estrella */
+  .sticker {
+    position: absolute;
+    top: clamp(0.5rem, 3vh, 2.5rem);
+    right: clamp(1rem, 8vw, 7rem);
+    width: 118px;
+    height: 118px;
+    display: grid;
+    place-items: center;
+    font-family: var(--mano);
+    font-size: 0.95rem;
+    text-align: center;
+    line-height: 1.15;
+    color: var(--tinta);
+    background: var(--mostaza);
+    border: 3px solid var(--tinta);
+    border-radius: 50%;
+    transform: rotate(12deg);
+    z-index: 5;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .sticker { animation: gira 14s linear infinite; }
+    @keyframes gira {
+      from { transform: rotate(12deg); }
+      50%  { transform: rotate(20deg); }
+      to   { transform: rotate(12deg); }
+    }
+  }
+
+  /* ── marquesina ── */
+  .marquesina {
+    background: var(--verde);
+    color: var(--crema);
+    border-top: 3px solid var(--tinta);
+    border-bottom: 3px solid var(--tinta);
+    overflow: hidden;
+    white-space: nowrap;
+    padding: 0.7rem 0;
+    font-family: var(--slab);
+    font-size: 1.1rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .marquesina-track {
+    display: inline-block;
+    animation: marquesina 30s linear infinite;
+  }
+  .marquesina-track span { padding: 0 1.2rem; }
+  .marquesina-track .o { color: var(--mostaza); }
+  @keyframes marquesina {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+
+  /* ── semana: muro de pósters ── */
+  .semana {
+    padding: clamp(3rem, 8vh, 6rem) clamp(1rem, 4vw, 3rem);
+  }
+  .semana-titulo {
+    font-family: var(--didone);
+    font-size: clamp(2.6rem, 7vw, 5rem);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+  .semana-titulo i { color: var(--verde); }
+  .semana-nota {
+    font-family: var(--mano);
+    font-size: 1.2rem;
+    color: var(--naranja);
+    transform: rotate(-1.5deg);
+    display: inline-block;
+    margin-bottom: 2.5rem;
+  }
+
+  .muro {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: clamp(1.2rem, 2.5vw, 2rem);
+    align-items: start;
+  }
+  .poster {
+    border: 3px solid var(--tinta);
+    box-shadow: 7px 8px 0 rgba(38, 37, 31, 0.85);
+    overflow: hidden;
+    position: relative;
+    transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .poster:hover { transform: rotate(0deg) translateY(-4px) !important; }
+
+  /* póster 1: miércoles, botellas VINO DE LA CASA */
+  .p-miercoles {
+    grid-column: 1 / 6;
+    background: var(--crema-2);
+    padding: 2rem 1.5rem 0;
+    text-align: center;
+    transform: rotate(-1.5deg);
+  }
+  .p-miercoles .arco {
+    font-family: var(--script);
+    font-size: clamp(2rem, 4.5vw, 3rem);
+    color: var(--tinta);
+    line-height: 1.15;
+    padding-bottom: 0.2em;
+  }
+  .p-miercoles .dosxuno {
+    font-family: var(--slab);
+    font-size: clamp(2.2rem, 5vw, 3.4rem);
+    color: var(--rojo);
+    line-height: 1;
+    margin-top: 0.1rem;
+  }
+  .p-miercoles svg { width: 100%; display: block; margin-top: 1rem; }
+
+  /* póster 2: jueves vermut, didone apilado */
+  .p-jueves {
+    grid-column: 6 / 10;
+    background: var(--vino);
+    color: var(--crema);
+    padding: 2.2rem 1.8rem;
+    transform: rotate(1.8deg);
+    margin-top: 3rem;
+  }
+  .p-jueves .dia {
+    font-family: var(--mano);
+    font-size: 1.15rem;
+    color: var(--mostaza);
+  }
+  .p-jueves .palabra {
+    font-family: var(--didone);
+    font-size: clamp(3.2rem, 8vw, 5.6rem);
+    line-height: 0.82;
+    letter-spacing: 0.01em;
+    margin-top: 0.8rem;
+    word-break: break-all;
+    text-transform: lowercase;
+  }
+  .p-jueves .detalle {
+    margin-top: 1.4rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--crema-2);
+    max-width: 24ch;
+  }
+
+  /* póster 3: viernes negroni */
+  .p-viernes {
+    grid-column: 10 / 13;
+    background: var(--naranja);
+    padding: 2rem 1.4rem 2.4rem;
+    text-align: center;
+    transform: rotate(-2.2deg);
+    margin-top: 1.2rem;
+  }
+  .p-viernes .dia {
+    font-family: var(--sans);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-size: 0.8rem;
+    color: var(--tinta);
+  }
+  .p-viernes .palabra {
+    font-family: var(--script);
+    font-size: clamp(2.6rem, 5.5vw, 3.6rem);
+    color: var(--crema);
+    text-shadow: 3px 3px 0 var(--tinta);
+    line-height: 1.12;
+    margin-top: 0.6rem;
+    padding-bottom: 0.22em;
+  }
+  .p-viernes .hora {
+    display: inline-block;
+    margin-top: 0.9rem;
+    font-family: var(--mano);
+    font-size: 1.1rem;
+    color: var(--tinta);
+    border-bottom: 3px solid var(--tinta);
+  }
+
+  /* póster 4: noches de martini, negro + verde */
+  .p-martini {
+    grid-column: 3 / 8;
+    background: var(--negro);
+    color: var(--verde);
+    padding: 2.2rem 2rem;
+    transform: rotate(1.2deg);
+    margin-top: -0.5rem;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 1rem;
+    align-items: center;
+  }
+  .p-martini .titulo {
+    font-family: var(--mano);
+    font-size: clamp(2rem, 4.5vw, 3rem);
+    line-height: 1.05;
+    color: #9fc25b;
+  }
+  .p-martini .detalle {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: var(--crema-2);
+    font-weight: 500;
+  }
+  .p-martini svg { width: 92px; height: auto; }
+
+  /* póster 5: helado, cierre del muro */
+  .p-helado {
+    grid-column: 8 / 12;
+    background: var(--azul);
+    color: var(--crema);
+    padding: 2.2rem 1.8rem;
+    text-align: center;
+    transform: rotate(-1deg);
+    margin-top: 1.5rem;
+  }
+  .p-helado .palabra {
+    font-family: var(--slab);
+    font-size: clamp(2rem, 4.5vw, 3rem);
+    line-height: 0.95;
+    text-shadow: 3px 3px 0 var(--tinta);
+  }
+  .p-helado .detalle {
+    margin-top: 0.9rem;
+    font-family: var(--mano);
+    font-size: 1.05rem;
+    color: var(--mostaza);
+  }
+
+  /* ── carta ── */
+  .carta {
+    background: var(--tinta);
+    color: var(--crema);
+    border-top: 3px solid var(--tinta);
+    padding: clamp(3rem, 8vh, 6rem) clamp(1rem, 4vw, 3rem);
+  }
+  .carta-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: clamp(2rem, 5vw, 4.5rem);
+  }
+  .carta h2 {
+    font-family: var(--script);
+    font-size: clamp(2.8rem, 6vw, 4.5rem);
+    color: var(--mostaza);
+    line-height: 1.1;
+    padding-bottom: 0.22em;
+    transform: rotate(-2deg);
+  }
+  .carta .pie-nota {
+    margin-top: 1.4rem;
+    font-family: var(--mano);
+    font-size: 1.1rem;
+    color: var(--verde);
+    filter: brightness(1.5);
+  }
+  .carta-list { list-style: none; }
+  .carta-list li {
+    display: flex;
+    align-items: baseline;
+    gap: 0.8rem;
+    padding: 1.1rem 0;
+  }
+  .carta-list li + li { border-top: 2px dashed rgba(241, 234, 217, 0.25); }
+  .carta-nombre {
+    font-family: var(--slab);
+    font-size: clamp(1.3rem, 2.5vw, 1.8rem);
+    letter-spacing: 0.02em;
+  }
+  .carta-list li:nth-child(1) .carta-nombre { color: #c98ba8; }
+  .carta-list li:nth-child(2) .carta-nombre { color: var(--mostaza); }
+  .carta-list li:nth-child(3) .carta-nombre { color: #7fa8cf; }
+  .carta-list li:nth-child(4) .carta-nombre { color: #9fc25b; }
+  .carta-puntos {
+    flex: 1;
+    border-bottom: 2px dotted rgba(241, 234, 217, 0.35);
+    transform: translateY(-4px);
+  }
+  .carta-desc {
+    font-size: 0.9rem;
+    color: rgba(241, 234, 217, 0.75);
+    max-width: 22ch;
+    text-align: right;
+  }
+
+  /* ── visita ── */
+  .visita {
+    padding: clamp(3.5rem, 9vh, 7rem) clamp(1rem, 4vw, 3rem);
+    text-align: center;
+    position: relative;
+  }
+  .visita h2 {
+    font-family: var(--didone);
+    font-size: clamp(2.4rem, 6.5vw, 4.8rem);
+    line-height: 1.05;
+    max-width: 18ch;
+    margin: 0 auto;
+  }
+  .visita h2 .pintado {
+    font-family: var(--script);
+    color: var(--verde);
+    padding-bottom: 0.18em;
+    display: inline-block;
+  }
+  .visita-datos {
+    margin-top: 2.2rem;
+    display: flex;
+    justify-content: center;
+    gap: clamp(1.5rem, 4vw, 3.5rem);
+    flex-wrap: wrap;
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+  .visita-datos b {
+    display: block;
+    font-family: var(--mano);
+    font-weight: 400;
+    color: var(--naranja);
+    font-size: 1.05rem;
+  }
+  .visita .hero-cta { margin-top: 2.5rem; background: var(--verde); }
+
+  footer {
+    background: var(--verde);
+    color: var(--crema);
+    border-top: 3px solid var(--tinta);
+    padding: 1.4rem clamp(1rem, 4vw, 3rem);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+  footer .f-logo { font-family: var(--slab); font-size: 1.2rem; letter-spacing: 0.04em; }
+  footer a { color: var(--mostaza); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  /* ── móvil ── */
+  @media (max-width: 820px) {
+    .hero { grid-template-columns: 1fr; min-height: auto; }
+    .polaroid { justify-self: center; margin-top: 1rem; }
+    .sticker { width: 92px; height: 92px; font-size: 0.8rem; right: 0.8rem; top: auto; bottom: -1rem; }
+    .muro { grid-template-columns: 1fr; }
+    .muro .poster { grid-column: 1 / -1 !important; margin-top: 0 !important; }
+    .carta-inner { grid-template-columns: 1fr; }
+    .carta-desc { max-width: none; }
+    .nav-links a:not(.nav-ig) { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="grano" aria-hidden="true"></div>
+
+<nav>
+  <a class="nav-logo" href="#">LEMI</a>
+  <div class="nav-links">
+    <a href="#semana">La semana</a>
+    <a href="#carta">La carta</a>
+    <a href="#visita">Dónde</a>
+    <a class="nav-ig" href="https://instagram.com/lemiheladoyvino" target="_blank" rel="noopener">@lemiheladoyvino</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="sticker sube" style="--d: 300ms">abierto<br />mié a dom<br />7:30 pm</div>
+
+  <div>
+    <h1 class="lemi-mark sube" aria-label="LEMI">
+      <span>L</span><span>E</span><span>M</span><span>I</span>
+    </h1>
+    <p class="hero-sub sube" style="--d: 100ms">
+      helado <em>y</em> vino.<br />todo lo bueno, junto.
+    </p>
+    <a class="hero-cta sube" style="--d: 200ms" href="#semana">Mira la semana</a>
+  </div>
+
+  <figure class="polaroid sube" style="--d: 250ms; --rot: 3deg">
+    <span class="cinta" aria-hidden="true"></span>
+    <video src="assets/lemi-hero.mp4" autoplay muted loop playsinline></video>
+    <figcaption>fish. wine. repeat.</figcaption>
+  </figure>
+</header>
+
+<div class="marquesina" aria-hidden="true">
+  <div class="marquesina-track">
+    <span>vino natural</span><span class="o">✳</span>
+    <span>vermut</span><span class="o">✳</span>
+    <span>negroni</span><span class="o">✳</span>
+    <span>martini</span><span class="o">✳</span>
+    <span>conservas</span><span class="o">✳</span>
+    <span>helado</span><span class="o">✳</span>
+    <span>vino natural</span><span class="o">✳</span>
+    <span>vermut</span><span class="o">✳</span>
+    <span>negroni</span><span class="o">✳</span>
+    <span>martini</span><span class="o">✳</span>
+    <span>conservas</span><span class="o">✳</span>
+    <span>helado</span><span class="o">✳</span>
+  </div>
+</div>
+
+<section class="semana" id="semana">
+  <h2 class="semana-titulo">La semana <i>en LEMI</i></h2>
+  <p class="semana-nota">cada noche tiene su plan ↓</p>
+
+  <div class="muro">
+
+    <!-- miércoles: recreación del póster de botellas de su Instagram -->
+    <article class="poster p-miercoles aparece" style="--rot: -1.5deg">
+      <div class="arco">Miércoles</div>
+      <div class="dosxuno">2x1</div>
+      <svg viewBox="0 0 400 210" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Botellas de vino de la casa">
+        <g stroke="#26251f" stroke-width="3">
+          <path d="M52 210 V96 q0-12 10-16 l0-28 h16 l0 28 q10 4 10 16 V210 Z" fill="#d96e30"/>
+          <path d="M138 210 V90 q0-12 10-16 l0-34 h16 l0 34 q10 4 10 16 V210 Z" fill="#dfae3c"/>
+          <path d="M224 210 V100 q0-12 10-16 l0-24 h16 l0 24 q10 4 10 16 V210 Z" fill="#6a7a3f"/>
+          <path d="M310 210 V94 q0-12 10-16 l0-30 h16 l0 30 q10 4 10 16 V210 Z" fill="#4f7fa8"/>
+        </g>
+        <g fill="#26251f" font-family="'Alfa Slab One', serif" text-anchor="middle">
+          <text x="70" y="150" font-size="28">E</text><text x="70" y="184" font-size="28">N</text>
+          <text x="156" y="126" font-size="21">V</text><text x="156" y="150" font-size="21">I</text><text x="156" y="174" font-size="21">N</text><text x="156" y="198" font-size="21">O</text>
+          <text x="242" y="126" font-size="21">D</text><text x="242" y="150" font-size="21">E</text><text x="242" y="174" font-size="21">L</text><text x="242" y="198" font-size="21">A</text>
+          <text x="328" y="126" font-size="21">C</text><text x="328" y="150" font-size="21">A</text><text x="328" y="174" font-size="21">S</text><text x="328" y="198" font-size="21">A</text>
+        </g>
+      </svg>
+    </article>
+
+    <!-- jueves: vermut apilado tipo didone -->
+    <article class="poster p-jueves aparece" style="--rot: 1.8deg">
+      <span class="dia">jueves de</span>
+      <div class="palabra">ver<br />mut</div>
+      <p class="detalle">De la casa, con hielo, naranja y una lata de conservas al lado.</p>
+    </article>
+
+    <!-- viernes: negroni -->
+    <article class="poster p-viernes aparece" style="--rot: -2.2deg">
+      <span class="dia">Viernes</span>
+      <div class="palabra">Negroni</div>
+      <span class="hora">desde las 7:30 pm</span>
+    </article>
+
+    <!-- noches de martini -->
+    <article class="poster p-martini aparece" style="--rot: 1.2deg">
+      <div>
+        <div class="titulo">Noches de Martini</div>
+        <p class="detalle">Música por DJ invitado. Copa fría, aceituna, volumen arriba.</p>
+      </div>
+      <svg viewBox="0 0 90 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <g fill="none" stroke="#9fc25b" stroke-width="4" stroke-linecap="round">
+          <path d="M10 14 L80 14 L45 58 Z"/>
+          <path d="M45 58 V100"/>
+          <path d="M25 108 L65 108"/>
+          <circle cx="38" cy="30" r="6" fill="#9fc25b"/>
+          <path d="M38 24 L58 10"/>
+        </g>
+      </svg>
+    </article>
+
+    <!-- helado -->
+    <article class="poster p-helado aparece" style="--rot: -1deg">
+      <div class="palabra">Y SIEMPRE,<br />HELADO</div>
+      <p class="detalle">artesanal, sabores que cambian cada semana</p>
+    </article>
+
+  </div>
+</section>
+
+<section class="carta" id="carta">
+  <div class="carta-inner">
+    <div>
+      <h2>Poco menú, bien elegido</h2>
+      <p class="pie-nota">lo que hay, está rico. palabra.</p>
+    </div>
+    <ul class="carta-list">
+      <li>
+        <span class="carta-nombre">VINO NATURAL</span>
+        <span class="carta-puntos"></span>
+        <span class="carta-desc">por copa y botella, rotación corta</span>
+      </li>
+      <li>
+        <span class="carta-nombre">VERMUT</span>
+        <span class="carta-puntos"></span>
+        <span class="carta-desc">de grifo, con sifón si quieres</span>
+      </li>
+      <li>
+        <span class="carta-nombre">CONSERVAS</span>
+        <span class="carta-puntos"></span>
+        <span class="carta-desc">sardinas, mejillones, cosas del mar</span>
+      </li>
+      <li>
+        <span class="carta-nombre">HELADO</span>
+        <span class="carta-puntos"></span>
+        <span class="carta-desc">el final feliz de la copa</span>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<section class="visita" id="visita">
+  <h2>Pasa por una copa, <span class="pintado">quédate por el helado</span></h2>
+  <div class="visita-datos">
+    <div><b>horario</b>miércoles a domingo, 7:30 pm</div>
+    <div><b>dónde</b>Talavera (dirección por confirmar)</div>
+    <div><b>síguenos</b>@lemiheladoyvino</div>
+  </div>
+  <a class="hero-cta" href="https://instagram.com/lemiheladoyvino" target="_blank" rel="noopener">Ver Instagram</a>
+</section>
+
+<footer>
+  <span class="f-logo">LEMI</span>
+  <span>helado y vino, desde Talavera</span>
+  <a href="https://instagram.com/lemiheladoyvino" target="_blank" rel="noopener">@lemiheladoyvino</a>
+</footer>
+
+<script>
+  // revelar pósters al entrar en viewport (IntersectionObserver, no scroll listener)
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (e.isIntersecting) {
+        e.target.classList.add('visto');
+        io.unobserve(e.target);
+      }
+    }
+  }, { threshold: 0.2 });
+  document.querySelectorAll('.aparece').forEach(el => io.observe(el));
+</script>
+
+</body>
+</html>
