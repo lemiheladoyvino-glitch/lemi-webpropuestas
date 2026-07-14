@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LEMI — helado y vino</title>
+<meta name="description" content="LEMI. Helado y vino. Vinos, latas, vermut y helado en Talavera. Dibujado a mano, como nuestros carteles." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Shantell+Sans:ital,wght@0,400;0,500;0,700;1,500&family=Fredoka:wght@500;600;700&family=Gochi+Hand&display=swap" rel="stylesheet" />
+
+<style>
+  :root {
+    --papel: #efe9dc;
+    --tinta: #221f1a;
+    --terracota: #b65a36;
+    --teal: #4e9a97;
+    --mostaza: #d9a53c;
+    --salvia: #a9b09c;
+    --verde: #5c7a3d;
+    --vino: #6b2f2f;
+    --hand: "Shantell Sans", cursive;
+    --logo: "Fredoka", sans-serif;
+    --nota: "Gochi Hand", cursive;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--papel);
+    color: var(--tinta);
+    font-family: var(--hand);
+    line-height: 1.55;
+    overflow-x: hidden;
+  }
+
+  ::selection { background: var(--mostaza); color: var(--tinta); }
+
+  /* motitas de papel */
+  .motas {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    pointer-events: none;
+    opacity: 0.55;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cg fill='%23221f1a' opacity='0.08'%3E%3Ccircle cx='23' cy='41' r='1.2'/%3E%3Ccircle cx='131' cy='17' r='0.9'/%3E%3Ccircle cx='187' cy='73' r='1.4'/%3E%3Ccircle cx='71' cy='109' r='0.8'/%3E%3Ccircle cx='155' cy='151' r='1.1'/%3E%3Ccircle cx='37' cy='187' r='1.3'/%3E%3Ccircle cx='203' cy='203' r='0.9'/%3E%3Ccircle cx='97' cy='63' r='0.7'/%3E%3Ccircle cx='11' cy='131' r='1'/%3E%3Ccircle cx='177' cy='119' r='0.8'/%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  svg .linea { fill: none; stroke: var(--tinta); stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+  svg .fina  { fill: none; stroke: var(--tinta); stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* dibujado al aparecer */
+  @media (prefers-reduced-motion: no-preference) {
+    .dibuja path.traza, .dibuja circle.traza, .dibuja ellipse.traza {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+    }
+    .dibuja.visto path.traza, .dibuja.visto circle.traza, .dibuja.visto ellipse.traza {
+      animation: trazar 900ms ease-out forwards;
+      animation-delay: calc(var(--i, 0) * 120ms);
+    }
+    @keyframes trazar { to { stroke-dashoffset: 0; } }
+
+    .flota { animation: flota 5s ease-in-out infinite; }
+    @keyframes flota {
+      0%, 100% { transform: translateY(0) rotate(var(--rot, 0deg)); }
+      50% { transform: translateY(-7px) rotate(var(--rot, 0deg)); }
+    }
+    .gira-lento { animation: girar 22s linear infinite; }
+    @keyframes girar { to { transform: rotate(360deg); } }
+    .disco-gira { animation: girar 4s linear infinite; transform-origin: center; transform-box: fill-box; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .gira-lento, .disco-gira, .flota { animation: none !important; }
+  }
+
+  /* ── header ── */
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.2rem clamp(1rem, 4vw, 3rem);
+  }
+  .logo {
+    font-family: var(--logo);
+    font-weight: 700;
+    font-size: 1.7rem;
+    letter-spacing: 0.06em;
+    color: var(--verde);
+    text-decoration: none;
+  }
+  .menu { display: flex; gap: 1.6rem; }
+  .menu a {
+    font-family: var(--nota);
+    font-size: 1.15rem;
+    color: var(--tinta);
+    text-decoration: none;
+    position: relative;
+  }
+  .menu a::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 100%;
+    bottom: -2px;
+    height: 3px;
+    background: var(--terracota);
+    border-radius: 3px;
+    transition: right 200ms ease-out;
+  }
+  .menu a:hover::after { right: 0; }
+
+  /* ── hero ── */
+  .hero {
+    position: relative;
+    padding: clamp(1rem, 4vh, 3rem) clamp(1rem, 4vw, 3rem) clamp(3rem, 7vh, 5rem);
+    display: grid;
+    grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+    gap: clamp(1.5rem, 4vw, 3.5rem);
+    align-items: center;
+  }
+  .hero-arco { width: 100%; max-width: 620px; }
+  .hero-arco text {
+    font-family: var(--hand);
+    font-weight: 700;
+    font-size: 74px;
+    fill: var(--tinta);
+  }
+  .hero-lemi {
+    font-family: var(--logo);
+    font-weight: 700;
+    font-size: clamp(4rem, 12vw, 8.5rem);
+    line-height: 0.95;
+    color: var(--verde);
+    letter-spacing: 0.04em;
+  }
+  .hero-nota {
+    font-family: var(--nota);
+    font-size: clamp(1.2rem, 2.5vw, 1.5rem);
+    color: var(--terracota);
+    margin-top: 1rem;
+    transform: rotate(-2deg);
+    display: inline-block;
+  }
+  .hero-doodles {
+    margin-top: 1.5rem;
+    display: flex;
+    gap: 1.8rem;
+    align-items: flex-end;
+  }
+  .hero-doodles svg { height: 96px; width: auto; }
+  .hero-doodles .tag {
+    font-family: var(--nota);
+    font-size: 1.05rem;
+    text-align: center;
+    display: block;
+    margin-top: 0.2rem;
+  }
+
+  /* video en marco garabateado */
+  .marco {
+    position: relative;
+    justify-self: end;
+    width: min(100%, 460px);
+    transform: rotate(1.6deg);
+  }
+  .marco video {
+    width: 100%;
+    display: block;
+    border-radius: 6px;
+  }
+  .marco svg.borde {
+    position: absolute;
+    inset: -14px;
+    width: calc(100% + 28px);
+    height: calc(100% + 28px);
+    pointer-events: none;
+  }
+  .marco .pie {
+    font-family: var(--nota);
+    font-size: 1.1rem;
+    text-align: center;
+    margin-top: 0.8rem;
+  }
+  .marco .pie span { color: var(--teal); }
+
+  /* sello circular giratorio */
+  .sello {
+    position: absolute;
+    bottom: -10px;
+    right: -26px;
+    width: 128px;
+    height: 128px;
+  }
+  .sello svg { width: 100%; height: 100%; }
+  .sello text {
+    font-family: var(--logo);
+    font-weight: 600;
+    font-size: 12.5px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    fill: var(--terracota);
+  }
+
+  /* ── separador garabato ── */
+  .garabato { display: block; width: min(420px, 70%); margin: 0 auto; }
+
+  /* ── semana ── */
+  .semana { padding: clamp(2.5rem, 7vh, 5rem) clamp(1rem, 4vw, 3rem); }
+  .arco-titulo { display: block; width: min(560px, 92%); margin: 0 auto 1rem; }
+  .arco-titulo text {
+    font-family: var(--hand);
+    font-weight: 700;
+    font-size: 58px;
+    fill: var(--tinta);
+  }
+  .semana-sub {
+    text-align: center;
+    font-family: var(--nota);
+    font-size: 1.25rem;
+    color: var(--teal);
+    margin-bottom: 3rem;
+  }
+
+  .dias {
+    max-width: 880px;
+    margin: 0 auto;
+    display: grid;
+    gap: 2.6rem;
+  }
+  .dia {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 1.6rem;
+    align-items: center;
+  }
+  .dia:nth-child(even) {
+    grid-template-columns: 1fr 110px;
+  }
+  .dia:nth-child(even) .dia-icono { order: 2; }
+  .dia:nth-child(even) .dia-texto { order: 1; text-align: right; }
+  .dia-icono svg { width: 110px; height: auto; }
+  .dia-nombre {
+    font-family: var(--nota);
+    font-size: 1.15rem;
+    color: var(--terracota);
+  }
+  .dia-plan {
+    font-weight: 700;
+    font-size: clamp(1.5rem, 3.5vw, 2.2rem);
+    line-height: 1.2;
+  }
+  .dia-plan .rev { display: inline-block; transform: scaleX(-1); }
+  .dia-plan em { font-style: italic; color: var(--vino); }
+  .dia-extra { font-size: 1rem; color: rgba(34, 31, 26, 0.65); margin-top: 0.2rem; }
+  .dia-plan .c1 { color: var(--terracota); }
+  .dia-plan .c2 { color: var(--teal); }
+  .dia-plan .c3 { color: var(--mostaza); }
+  .dia-plan .c4 { color: var(--verde); }
+
+  /* ── fiesta (tocadiscos) ── */
+  .fiesta {
+    padding: clamp(3rem, 8vh, 6rem) clamp(1rem, 4vw, 3rem);
+    text-align: center;
+    position: relative;
+  }
+  .fiesta h2 {
+    font-family: var(--hand);
+    font-weight: 700;
+    font-size: clamp(1.9rem, 5vw, 3rem);
+    max-width: 22ch;
+    margin: 0 auto;
+    line-height: 1.25;
+  }
+  .fiesta h2 .colorines span { font-family: var(--logo); font-weight: 700; }
+  .colorines span:nth-child(1) { color: var(--terracota); }
+  .colorines span:nth-child(2) { color: var(--teal); }
+  .colorines span:nth-child(3) { color: var(--mostaza); }
+  .colorines span:nth-child(4) { color: var(--verde); }
+  .colorines span:nth-child(5) { color: var(--vino); }
+  .fiesta-nota {
+    font-family: var(--nota);
+    font-size: 1.2rem;
+    color: var(--terracota);
+    margin-top: 0.6rem;
+  }
+  .escena {
+    margin: 2.5rem auto 0;
+    max-width: 760px;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: end;
+    gap: clamp(0.5rem, 3vw, 2rem);
+  }
+  .escena .lado svg { width: clamp(70px, 12vw, 110px); height: auto; }
+  .escena .toca svg { width: 100%; max-width: 420px; height: auto; }
+  .escena .etiqueta {
+    font-family: var(--nota);
+    font-size: 1.15rem;
+    display: block;
+    margin-top: 0.4rem;
+  }
+
+  /* ── carta ── */
+  .carta {
+    padding: clamp(2.5rem, 7vh, 5rem) clamp(1rem, 4vw, 3rem) clamp(3.5rem, 9vh, 6rem);
+    max-width: 640px;
+    margin: 0 auto;
+  }
+  .carta h2 {
+    font-family: var(--hand);
+    font-weight: 700;
+    font-size: clamp(2rem, 5vw, 2.8rem);
+    text-align: center;
+    margin-bottom: 0.4rem;
+  }
+  .carta .miga {
+    text-align: center;
+    font-family: var(--nota);
+    font-size: 1.15rem;
+    color: var(--verde);
+    margin-bottom: 2.2rem;
+  }
+  .plato { padding: 1rem 0; }
+  .plato-linea {
+    display: flex;
+    align-items: baseline;
+    gap: 0.7rem;
+    font-weight: 700;
+    font-size: 1.35rem;
+  }
+  .plato-linea .puntos { flex: 1; border-bottom: 3px dotted rgba(34,31,26,0.4); }
+  .plato-linea .precio { font-family: var(--nota); font-size: 1.2rem; color: var(--terracota); white-space: nowrap; }
+  .plato .desc { font-size: 0.98rem; color: rgba(34,31,26,0.65); }
+  .plato:nth-child(odd) .plato-linea b { color: var(--vino); }
+  .plato:nth-child(even) .plato-linea b { color: var(--teal); }
+  .carta .zigzag { display: block; width: 180px; margin: 0.4rem auto; }
+
+  /* ── visita ── */
+  .visita {
+    text-align: center;
+    padding: 0 clamp(1rem, 4vw, 3rem) clamp(3.5rem, 9vh, 6rem);
+  }
+  .visita h2 {
+    font-family: var(--hand);
+    font-weight: 700;
+    font-size: clamp(1.9rem, 5vw, 2.9rem);
+    line-height: 1.25;
+    max-width: 20ch;
+    margin: 0 auto;
+  }
+  .visita h2 i { color: var(--verde); }
+  .visita-datos {
+    margin-top: 1.6rem;
+    font-family: var(--nota);
+    font-size: 1.2rem;
+    display: grid;
+    gap: 0.4rem;
+  }
+  .visita-datos .k { color: var(--terracota); }
+  .btn-ig {
+    display: inline-block;
+    margin-top: 2rem;
+    font-family: var(--logo);
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: var(--papel);
+    background: var(--verde);
+    text-decoration: none;
+    padding: 0.9rem 2rem;
+    border-radius: 999px;
+    transform: rotate(-1.5deg);
+    transition: transform 150ms ease-out;
+  }
+  .btn-ig:hover { transform: rotate(0deg) scale(1.03); }
+  .btn-ig:active { transform: scale(0.97); }
+
+  footer {
+    font-family: var(--nota);
+    font-size: 1.05rem;
+    text-align: center;
+    padding: 1.5rem 1rem 2.2rem;
+    color: rgba(34,31,26,0.7);
+  }
+  footer b { color: var(--verde); font-family: var(--logo); letter-spacing: 0.05em; }
+
+  @media (max-width: 780px) {
+    .hero { grid-template-columns: 1fr; }
+    .marco { justify-self: center; margin-top: 1.5rem; }
+    .sello { right: -8px; }
+    .dia, .dia:nth-child(even) { grid-template-columns: 84px 1fr; }
+    .dia:nth-child(even) .dia-icono { order: 0; }
+    .dia:nth-child(even) .dia-texto { order: 0; text-align: left; }
+    .dia-icono svg { width: 84px; }
+    .escena { grid-template-columns: 1fr; justify-items: center; gap: 2rem; }
+    .menu a:not(:last-child) { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="motas" aria-hidden="true"></div>
+
+<header>
+  <a class="logo" href="#">LEMI</a>
+  <nav class="menu">
+    <a href="#semana">la semana</a>
+    <a href="#carta">la carta</a>
+    <a href="#visita">dónde</a>
+    <a href="https://instagram.com/lemiheladoyvino" target="_blank" rel="noopener">instagram ↗</a>
+  </nav>
+</header>
+
+<main>
+  <section class="hero">
+    <div>
+      <!-- arco dibujado como el "Miércoles" del cartel -->
+      <svg class="hero-arco" viewBox="0 0 620 130" aria-hidden="true">
+        <defs><path id="curva" d="M 30 122 Q 310 -30 590 122" fill="none"/></defs>
+        <text><textPath href="#curva" startOffset="50%" text-anchor="middle">helado y vino</textPath></text>
+      </svg>
+      <h1 class="hero-lemi">LEMI</h1>
+      <span class="hero-nota">abierto de miércoles a domingo, 7:30 pm →</span>
+
+      <div class="hero-doodles">
+        <!-- copa de vino -->
+        <span class="flota" style="--rot:-3deg">
+          <svg viewBox="0 0 70 110" class="dibuja" aria-hidden="true">
+            <path class="linea traza" pathLength="1" style="--i:0" d="M14 12 h42 c0 26 -8 38 -21 40 c-13 -2 -21 -14 -21 -40 Z"/>
+            <path class="fina traza" pathLength="1" style="--i:1" d="M35 52 V92 M18 100 h34"/>
+            <path class="traza" pathLength="1" style="--i:0" d="M19 22 h32 c-2 16 -7 24 -16 26 c-9 -2 -14 -10 -16 -26 Z" fill="#6b2f2f" stroke="#6b2f2f" stroke-width="2"/>
+          </svg>
+          <span class="tag">vinos</span>
+        </span>
+        <!-- cono de helado -->
+        <span class="flota" style="--rot:2deg">
+          <svg viewBox="0 0 70 110" class="dibuja" aria-hidden="true">
+            <path class="linea traza" pathLength="1" style="--i:1" d="M14 42 L35 100 L56 42"/>
+            <path class="fina traza" pathLength="1" style="--i:2" d="M20 52 L48 64 M24 66 L44 76 M17 46 L52 58"/>
+            <path class="linea traza" pathLength="1" style="--i:0" d="M14 42 q-6 -12 6 -16 q-2 -14 12 -12 q4 -10 14 -4 q12 -4 12 8 q10 4 2 24 Z"/>
+          </svg>
+          <span class="tag">helado</span>
+        </span>
+        <!-- lata de conservas -->
+        <span class="flota" style="--rot:-1deg">
+          <svg viewBox="0 0 110 80" class="dibuja" aria-hidden="true">
+            <ellipse class="linea traza" pathLength="1" style="--i:0" cx="52" cy="48" rx="40" ry="18"/>
+            <path class="fina traza" pathLength="1" style="--i:1" d="M12 48 v-10 c0 -10 80 -10 80 0 v10"/>
+            <path class="fina traza" pathLength="1" style="--i:2" d="M92 38 q14 -6 12 -18 q-8 2 -10 10"/>
+            <path class="fina traza" pathLength="1" style="--i:2" d="M30 34 q4 -8 12 -8 M52 32 q4 -6 10 -6"/>
+          </svg>
+          <span class="tag">latas</span>
+        </span>
+      </div>
+    </div>
+
+    <figure class="marco">
+      <video src="assets/lemi-hero.mp4" autoplay muted loop playsinline></video>
+      <!-- borde garabateado -->
+      <svg class="borde" viewBox="0 0 480 360" preserveAspectRatio="none" aria-hidden="true">
+        <path class="linea" d="M14 18 Q 120 8 240 14 T 466 20 Q 472 100 466 180 T 468 342 Q 360 352 240 346 T 16 340 Q 8 260 14 180 T 14 18 Z" stroke-width="6"/>
+      </svg>
+      <figcaption class="pie">así se ve un jueves en <span>LEMI</span></figcaption>
+      <!-- sello giratorio -->
+      <span class="sello" aria-hidden="true">
+        <svg viewBox="0 0 128 128" class="gira-lento">
+          <defs><path id="aro" d="M64 14 a50 50 0 1 1 -0.01 0" fill="none"/></defs>
+          <text><textPath href="#aro">vinos · latas · vermut · helado · </textPath></text>
+        </svg>
+      </span>
+    </figure>
+  </section>
+
+  <!-- separador -->
+  <svg class="garabato" viewBox="0 0 420 24" aria-hidden="true">
+    <path class="fina" d="M6 14 q 20 -14 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0"/>
+  </svg>
+
+  <section class="semana" id="semana">
+    <svg class="arco-titulo" viewBox="0 0 560 110" aria-hidden="true">
+      <defs><path id="curva2" d="M 40 102 Q 280 -20 520 102" fill="none"/></defs>
+      <text><textPath href="#curva2" startOffset="50%" text-anchor="middle">La semana</textPath></text>
+    </svg>
+    <h2 class="semana-sub">cada noche su plan, todas con helado</h2>
+
+    <div class="dias">
+      <!-- miércoles -->
+      <article class="dia">
+        <div class="dia-icono">
+          <svg viewBox="0 0 110 120" class="dibuja" aria-hidden="true">
+            <path class="traza" pathLength="1" style="--i:0" d="M30 118 V64 q0 -10 8 -13 l0 -22 h10 l0 22 q8 3 8 13 v54 Z" fill="#b65a36" stroke="#221f1a" stroke-width="4"/>
+            <path class="traza" pathLength="1" style="--i:1" d="M62 118 V70 q0 -10 8 -13 l0 -28 h10 l0 28 q8 3 8 13 v48 Z" fill="#4e9a97" stroke="#221f1a" stroke-width="4"/>
+          </svg>
+        </div>
+        <div class="dia-texto">
+          <span class="dia-nombre">miércoles</span>
+          <p class="dia-plan">2x1 <span class="rev">e</span>n vino d<span class="rev">e</span> la casa</p>
+          <p class="dia-extra">toda la noche, copa va copa viene</p>
+        </div>
+      </article>
+
+      <!-- jueves -->
+      <article class="dia">
+        <div class="dia-icono">
+          <svg viewBox="0 0 110 120" class="dibuja" aria-hidden="true">
+            <path class="linea traza" pathLength="1" style="--i:0" d="M30 22 h50 v40 a25 25 0 0 1 -50 0 Z"/>
+            <path class="fina traza" pathLength="1" style="--i:1" d="M55 88 v18 M38 112 h34"/>
+            <circle class="fina traza" pathLength="1" style="--i:2" cx="46" cy="46" r="6"/>
+            <path class="fina traza" pathLength="1" style="--i:2" d="M64 30 q14 4 10 18"/>
+          </svg>
+        </div>
+        <div class="dia-texto">
+          <span class="dia-nombre">jueves</span>
+          <p class="dia-plan">jueves de <em>vermut</em></p>
+          <p class="dia-extra">con hielo, naranja y una lata al lado</p>
+        </div>
+      </article>
+
+      <!-- viernes -->
+      <article class="dia">
+        <div class="dia-icono">
+          <svg viewBox="0 0 110 120" class="dibuja" aria-hidden="true">
+            <path class="linea traza" pathLength="1" style="--i:0" d="M28 26 h54 v56 q0 14 -27 14 q-27 0 -27 -14 Z"/>
+            <path class="fina traza" pathLength="1" style="--i:1" d="M36 38 h38 M36 54 h38 M36 70 h38"/>
+            <path class="fina traza" pathLength="1" style="--i:2" d="M74 20 q10 -10 16 -2"/>
+          </svg>
+        </div>
+        <div class="dia-texto">
+          <span class="dia-nombre">viernes</span>
+          <p class="dia-plan">negroni + <em>noches de martini</em></p>
+          <p class="dia-extra">música en vivo por DJ invitado</p>
+        </div>
+      </article>
+
+      <!-- finde -->
+      <article class="dia">
+        <div class="dia-icono">
+          <svg viewBox="0 0 110 120" class="dibuja" aria-hidden="true">
+            <path class="linea traza" pathLength="1" style="--i:0" d="M20 20 L90 20 L55 62 Z"/>
+            <path class="fina traza" pathLength="1" style="--i:1" d="M55 62 V100 M36 110 h38"/>
+            <circle class="traza" pathLength="1" style="--i:2" cx="47" cy="34" r="6" fill="#5c7a3d" stroke="#221f1a" stroke-width="3"/>
+            <path class="fina traza" pathLength="1" style="--i:2" d="M47 27 L62 14"/>
+          </svg>
+        </div>
+        <div class="dia-texto">
+          <span class="dia-nombre">sábado y domingo</span>
+          <p class="dia-plan"><span class="colorines"><span>t</span><span>a</span><span>r</span><span>d</span><span>e</span></span>o y helado</p>
+          <p class="dia-extra">desde las 7:30 pm hasta que el cuerpo diga</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- separador -->
+  <svg class="garabato" viewBox="0 0 420 24" aria-hidden="true">
+    <path class="fina" d="M6 14 q 20 -14 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0"/>
+  </svg>
+
+  <!-- fiesta: escena del tocadiscos, como el cartel de Loco for Latas -->
+  <section class="fiesta">
+    <h2>vinos, latas y un tocadiscos:<br />así suenan los viernes en <span class="colorines"><span>L</span><span>E</span><span>M</span><span>I</span></span></h2>
+    <p class="fiesta-nota">música by DJ invitado · volumen 4</p>
+
+    <div class="escena">
+      <span class="lado">
+        <svg viewBox="0 0 110 130" class="dibuja" aria-hidden="true">
+          <path class="linea traza" pathLength="1" style="--i:0" d="M34 118 V72 q0 -12 10 -16 l0 -34 h12 l0 34 q10 4 10 16 v46 Z"/>
+          <path class="fina traza" pathLength="1" style="--i:1" d="M40 90 h26"/>
+        </svg>
+        <span class="etiqueta">vinos</span>
+      </span>
+
+      <span class="toca">
+        <svg viewBox="0 0 440 300" class="dibuja" aria-hidden="true">
+          <!-- tapa abierta -->
+          <path class="linea traza" pathLength="1" style="--i:0" d="M70 118 L96 26 q2 -8 10 -8 L360 30 q8 0 8 8 L360 118"/>
+          <path class="fina traza" pathLength="1" style="--i:1" d="M100 40 L348 44"/>
+          <!-- caja -->
+          <path class="linea traza" pathLength="1" style="--i:1" d="M40 118 h360 q10 0 10 10 v80 q0 12 -12 12 H44 q-12 0 -12 -12 v-80 q0 -10 8 -10 Z"/>
+          <!-- disco -->
+          <g class="disco-gira">
+            <circle class="traza" pathLength="1" style="--i:2" cx="180" cy="170" r="42" fill="#221f1a" stroke="#221f1a" stroke-width="4"/>
+            <circle cx="180" cy="170" r="14" fill="#d9a53c"/>
+            <circle cx="180" cy="170" r="4" fill="#221f1a"/>
+          </g>
+          <!-- brazo -->
+          <path class="fina traza" pathLength="1" style="--i:3" d="M330 138 q6 26 -14 44 l-16 14"/>
+          <circle class="fina traza" pathLength="1" style="--i:3" cx="332" cy="134" r="8"/>
+          <!-- patas -->
+          <path class="fina traza" pathLength="1" style="--i:2" d="M70 222 v14 M380 222 v14"/>
+        </svg>
+      </span>
+
+      <span class="lado">
+        <svg viewBox="0 0 110 130" class="dibuja" aria-hidden="true">
+          <path class="linea traza" pathLength="1" style="--i:0" d="M22 26 h56 c0 30 -10 44 -24 46 c-14 -2 -24 -16 -24 -46 Z" transform="rotate(14 55 65)"/>
+          <path class="fina traza" pathLength="1" style="--i:1" d="M58 76 l10 34 M46 118 h36" />
+          <path class="traza" pathLength="1" style="--i:2" d="M30 96 q-12 10 -4 18 q10 6 16 -4" fill="#6b2f2f" stroke="#6b2f2f" stroke-width="3"/>
+        </svg>
+        <span class="etiqueta">copas arriba</span>
+      </span>
+    </div>
+  </section>
+
+  <!-- separador -->
+  <svg class="garabato" viewBox="0 0 420 24" aria-hidden="true">
+    <path class="fina" d="M6 14 q 20 -14 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0"/>
+  </svg>
+
+  <section class="carta" id="carta">
+    <h2>la carta, cortita</h2>
+    <p class="miga">lo que hay, está rico</p>
+
+    <div class="plato">
+      <div class="plato-linea"><b>vino natural</b><span class="puntos"></span><span class="precio">por copa</span></div>
+      <p class="desc">rotación corta, pregunta qué hay abierto</p>
+    </div>
+    <svg class="zigzag" viewBox="0 0 180 14" aria-hidden="true"><path class="fina" stroke-width="2.5" d="M4 10 l12 -6 l12 6 l12 -6 l12 6 l12 -6 l12 6 l12 -6 l12 6 l12 -6 l12 6 l12 -6 l12 6 l12 -6"/></svg>
+    <div class="plato">
+      <div class="plato-linea"><b>vermut de la casa</b><span class="puntos"></span><span class="precio">con hielo</span></div>
+      <p class="desc">y naranja, como debe ser</p>
+    </div>
+    <svg class="zigzag" viewBox="0 0 180 14" aria-hidden="true"><path class="fina" stroke-width="2.5" d="M4 10 l12 -6 l12 6 l12 -6 l12 6 l12 -6 l12 6 l12 -6 l12 6 l12 -6 l12 6 l12 -6 l12 6 l12 -6"/></svg>
+    <div class="plato">
+      <div class="plato-linea"><b>latas del mar</b><span class="puntos"></span><span class="precio">con pan</span></div>
+      <p class="desc">sardinas, mejillones, lo que caiga</p>
+    </div>
+    <svg class="zigzag" viewBox="0 0 180 14" aria-hidden="true"><path class="fina" stroke-width="2.5" d="M4 10 l12 -6 l12 6 l12 -6 l12 6 l12 -6 l12 6 l12 -6 l12 6 l12 -6 l12 6 l12 -6 l12 6 l12 -6"/></svg>
+    <div class="plato">
+      <div class="plato-linea"><b>helado artesanal</b><span class="puntos"></span><span class="precio">sabores que cambian</span></div>
+      <p class="desc">el final feliz de cualquier copa</p>
+    </div>
+  </section>
+
+  <section class="visita" id="visita">
+    <h2>pásate por una copa, <i>quédate por el helado</i></h2>
+    <div class="visita-datos">
+      <span><span class="k">horario →</span> miércoles a domingo, 7:30 pm</span>
+      <span><span class="k">dónde →</span> Talavera (dirección por confirmar)</span>
+    </div>
+    <a class="btn-ig" href="https://instagram.com/lemiheladoyvino" target="_blank" rel="noopener">síguenos: @lemiheladoyvino</a>
+  </section>
+</main>
+
+<footer>
+  <b>LEMI</b> · helado y vino · dibujado a mano, como nuestros carteles
+</footer>
+
+<script>
+  // dibuja los doodles al entrar en pantalla
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (e.isIntersecting) { e.target.classList.add('visto'); io.unobserve(e.target); }
+    }
+  }, { threshold: 0.3 });
+  document.querySelectorAll('.dibuja').forEach(el => io.observe(el));
+</script>
+
+</body>
+</html>
