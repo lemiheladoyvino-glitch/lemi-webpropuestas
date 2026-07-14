@@ -164,10 +164,11 @@
     width: min(100%, 460px);
     transform: rotate(1.6deg);
   }
-  .marco video {
+  .marco .sardina {
     width: 100%;
+    height: auto;
     display: block;
-    border-radius: 6px;
+    padding: 0.5rem 1rem;
   }
   .marco svg.borde {
     position: absolute;
@@ -180,7 +181,7 @@
     font-family: var(--nota);
     font-size: 1.1rem;
     text-align: center;
-    margin-top: 0.8rem;
+    margin-top: 1.8rem;
   }
   .marco .pie span { color: var(--teal); }
 
@@ -455,12 +456,42 @@
     </div>
 
     <figure class="marco">
-      <video src="assets/lemi-hero.mp4" autoplay muted loop playsinline></video>
+      <!-- la sardina DJ, mascota de los carteles -->
+      <svg class="sardina dibuja" viewBox="0 0 400 440" role="img" aria-label="Sardina con gafas de sol y cascos sosteniendo una copa de vino">
+        <!-- cuerpo -->
+        <path class="linea traza" pathLength="1" style="--i:0" d="M190 52 C 242 58 258 122 252 192 C 247 252 226 302 206 332 L 238 394 L 190 366 L 142 394 L 174 332 C 154 302 133 252 128 192 C 122 122 138 58 190 52 Z"/>
+        <!-- escamas -->
+        <path class="fina traza" pathLength="1" style="--i:3" d="M160 225 q12 10 24 0 M195 240 q12 10 24 0 M170 265 q12 10 24 0 M200 285 q10 9 20 0"/>
+        <!-- sonrisa -->
+        <path class="fina traza" pathLength="1" style="--i:2" d="M168 168 q22 16 44 0"/>
+        <!-- gafas -->
+        <path class="traza" pathLength="1" style="--i:1" d="M146 104 h38 v30 q0 6 -8 6 h-22 q-8 0 -8 -6 Z" fill="#221f1a" stroke="#221f1a" stroke-width="4"/>
+        <path class="traza" pathLength="1" style="--i:1" d="M196 104 h38 v30 q0 6 -8 6 h-22 q-8 0 -8 -6 Z" fill="#221f1a" stroke="#221f1a" stroke-width="4"/>
+        <path class="fina traza" pathLength="1" style="--i:1" d="M184 110 h12"/>
+        <!-- cascos -->
+        <path class="linea traza" pathLength="1" style="--i:2" d="M128 100 C 128 28 252 28 252 100"/>
+        <path class="traza" pathLength="1" style="--i:2" d="M112 96 h20 q6 0 6 8 v24 q0 8 -6 8 h-20 Z" fill="#4e9a97" stroke="#221f1a" stroke-width="4"/>
+        <path class="traza" pathLength="1" style="--i:2" d="M268 96 h-20 q-6 0 -6 8 v24 q0 8 6 8 h20 Z" fill="#4e9a97" stroke="#221f1a" stroke-width="4"/>
+        <!-- aleta izquierda -->
+        <path class="fina traza" pathLength="1" style="--i:3" d="M134 210 q-26 6 -34 26 q18 4 34 -6"/>
+        <!-- aleta con copa -->
+        <path class="linea traza" pathLength="1" style="--i:3" d="M248 205 q34 -12 56 -34"/>
+        <path class="linea traza" pathLength="1" style="--i:4" d="M282 118 h52 c0 24 -9 35 -26 38 c-17 -3 -26 -14 -26 -38 Z"/>
+        <path class="traza" pathLength="1" style="--i:4" d="M288 126 h40 c-2 14 -8 21 -20 23 c-12 -2 -18 -9 -20 -23 Z" fill="#6b2f2f" stroke="#6b2f2f" stroke-width="2"/>
+        <path class="fina traza" pathLength="1" style="--i:4" d="M308 156 v26 M292 190 h32"/>
+        <!-- notas -->
+        <path class="fina traza" pathLength="1" style="--i:5" d="M76 150 v-32 l22 -8 v32"/>
+        <circle class="traza" pathLength="1" style="--i:5" cx="70" cy="152" r="7" fill="#b65a36" stroke="#b65a36"/>
+        <circle class="traza" pathLength="1" style="--i:5" cx="92" cy="144" r="7" fill="#b65a36" stroke="#b65a36"/>
+        <path class="fina traza" pathLength="1" style="--i:5" d="M330 250 v-26 l16 -6 v26"/>
+        <circle class="traza" pathLength="1" style="--i:5" cx="325" cy="252" r="6" fill="#d9a53c" stroke="#d9a53c"/>
+        <circle class="traza" pathLength="1" style="--i:5" cx="341" cy="246" r="6" fill="#d9a53c" stroke="#d9a53c"/>
+      </svg>
       <!-- borde garabateado -->
       <svg class="borde" viewBox="0 0 480 360" preserveAspectRatio="none" aria-hidden="true">
         <path class="linea" d="M14 18 Q 120 8 240 14 T 466 20 Q 472 100 466 180 T 468 342 Q 360 352 240 346 T 16 340 Q 8 260 14 180 T 14 18 Z" stroke-width="6"/>
       </svg>
-      <figcaption class="pie">así se ve un jueves en <span>LEMI</span></figcaption>
+      <figcaption class="pie">la sardina pone la música en <span>LEMI</span></figcaption>
       <!-- sello giratorio -->
       <span class="sello" aria-hidden="true">
         <svg viewBox="0 0 128 128" class="gira-lento">
